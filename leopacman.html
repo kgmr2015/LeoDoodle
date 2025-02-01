@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leo's Maze Game</title>
+    <style>
+        body {
+            text-align: center;
+            font-family: Arial, sans-serif;
+        }
+        canvas {
+            background: black;
+            display: block;
+            margin: auto;
+            border: 2px solid white;
+        }
+    </style>
+</head>
+<body>
+    <h1>Leo's Maze Game</h1>
+    <canvas id="gameCanvas" width="400" height="400"></canvas>
+    <script>
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+        
+        const leoImg = new Image();
+        leoImg.src = "leo_avatar.png"; // Replace with actual path to Leo's avatar image
+        const mouseImg = new Image();
+        mouseImg.src = "mouse_avatar.png"; // Replace with actual path to Mouse's avatar image
+        
+        const leo = { x: 50, y: 50, size: 40 };
+        const fish = { x: 300, y: 300, size: 30 };
+        let keys = {};
+        
+        document.addEventListener("keydown", (e) => keys[e.key] = true);
+        document.addEventListener("keyup", (e) => keys[e.key] = false);
+        
+        function drawLeo() {
+            ctx.drawImage(leoImg, leo.x, leo.y, leo.size, leo.size);
+        }
+        
+        function drawFish() {
+            ctx.drawImage(mouseImg, fish.x, fish.y, fish.size, fish.size);
+        }
+        
+        function moveLeo() {
+            if (keys["ArrowUp"] && leo.y > 0) leo.y -= 5;
+            if (keys["ArrowDown"] && leo.y < canvas.height - leo.size) leo.y += 5;
+            if (keys["ArrowLeft"] && leo.x > 0) leo.x -= 5;
+            if (keys["ArrowRight"] && leo.x < canvas.width - leo.size) leo.x += 5;
+        }
+        
+        function checkCollision() {
+            let dx = leo.x + leo.size / 2 - fish.x;
+            let dy = leo.y + leo.size / 2 - fish.y;
+            let distance = Math.sqrt(dx * dx + dy * dy);
+            if (distance < leo.size / 2 + fish.size) {
+                fish.x = Math.random() * (canvas.width - fish.size * 2) + fish.size;
+                fish.y = Math.random() * (canvas.height - fish.size * 2) + fish.size;
+            }
+        }
+        
+        function gameLoop() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawLeo();
+            drawFish();
+            moveLeo();
+            checkCollision();
+            requestAnimationFrame(gameLoop);
+        }
+        
+        gameLoop();
+    </script>
+</body>
+</html>
